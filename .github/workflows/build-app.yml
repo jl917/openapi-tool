@@ -1,0 +1,78 @@
+name: Build App
+on:
+  workflow_dispatch:
+
+jobs:
+  semantic-release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - if: steps.npm-cache.outputs.cache-hit == 'true'
+        run: echo 'npm cache hit!'
+      - if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: echo 'npm cache missed!'
+      - run: npm install
+
+      - name: Run Semantic Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
+
+  ## app 빌드
+  build-app:
+    if: startsWith(github.ref, 'refs/heads/master')
+    name: Build and Upload Artifacts
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - platform: 'macos-latest'
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    needs: [semantic-release]
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    outputs:
+      success: ${{ job.status }} # 빌드 성공 여부를 output으로 저장
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull latest changes
+        run: |
+          git pull origin master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - if: steps.npm-cache.outputs.cache-hit == 'true'
+        run: echo 'npm cache hit!'
+      - if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: echo 'npm cache missed!'
+      - run: npm install
+
+      - name: Build App
+        run: npm run build

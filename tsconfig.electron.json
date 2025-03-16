@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "types": ["node", "electron"]
+  },
+  "include": [
+    "forge.env.d.ts",
+    "forge.config.ts",
+    "build/utils.ts",
+    "rsbuild.main.config.ts",
+    "rsbuild.preload.config.ts",
+    "plugins",
+    "package.json",
+    "src/types/*"
+  ],
+  "exclude": ["node_modules"]
+}
