@@ -43,4 +43,10 @@ export class StoreService {
 
 // Export default instance
 const store = StoreService.getInstance();
+
+export const getStore = () => store.getList();
+export const pushStore = (item: StoreItem) => store.push(item);
+export const removeStore = (itemId: string) => store.remove(itemId);
+export const clearStore = () => store.clear();
+
 export default store;

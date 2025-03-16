@@ -20,6 +20,7 @@ import {
   FcOk,
 } from 'react-icons/fc';
 import { FaPaste } from 'react-icons/fa';
+import { useApiList } from '../hooks/useApiList';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -54,7 +55,7 @@ const columns = [
     ),
   },
   {
-    title: 'status',
+    title: 'Status',
     dataIndex: 'status',
     align: 'center',
     key: 'status',
@@ -123,6 +124,7 @@ const initialData = Array.from({ length: 25 }, (_, i) => ({
 const Main = () => {
   const [fileList, setFileList] = useState(initialData);
   const [port, setPort] = useState(4200);
+  const { apiList } = useApiList()
 
   const serverUrl = useMemo(() => {
     return `http://localhost:${port}`;
@@ -152,7 +154,7 @@ const Main = () => {
             </a>
           </Title>
         </div>
-        <div style={{ marginBottom: '16px' }}>
+        <Space style={{ marginBottom: '16px' }}>
           <Button
             icon={<UploadOutlined />}
             onClick={async () => {
@@ -162,11 +164,12 @@ const Main = () => {
           >
             Upload
           </Button>
-        </div>
+          (Please upload JSON and YAML files that conform to the OpenAPI 3.0 specification.)
+        </Space>
         <Table
           size="small"
           columns={columns}
-          dataSource={fileList}
+          dataSource={apiList}
           pagination={false}
           expandable={{
             expandedRowRender: (record) => (

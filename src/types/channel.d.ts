@@ -18,7 +18,7 @@ type Channel =
   | 'sendFile'
   | 'host'
   | 'getStore'
-  | 'setStore'
+  | 'pushStore'
   | 'removeStore'
   | 'clearStore';
 

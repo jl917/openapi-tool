@@ -2,7 +2,12 @@ import { getMainVersion } from '@main/service/version';
 import { systemMessage } from '@main/service/message';
 import { sendFile } from '../service/sendFile';
 import { getPort } from '../service/express';
-import store from '../service/store';
+import {
+  getStore,
+  removeStore,
+  pushStore,
+  clearStore,
+} from '../service/store';
 
 type ChannelMain = { type: Channel; data: ChannelCommunicationSuccess };
 
@@ -14,7 +19,7 @@ const typeLimits: Partial<Record<Channel, number>> = {
   host: 1,
   getStore: 1,
   removeStore: 1,
-  setStore: 1,
+  pushStore: 1,
   clearStore: 1,
 };
 
@@ -24,10 +29,10 @@ const typeFn: Partial<Record<Channel, (...args: any[]) => any | Promise<any>>> =
   message: systemMessage,
   sendFile: sendFile,
   host: getPort,
-  getStore: store.getList,
-  removeStore: store.remove,
-  setStore: store.getList,
-  clearStore: store.clear,
+  getStore,
+  removeStore,
+  pushStore,
+  clearStore,
 };
 
 export const ipcFnWrap = async (fn: any | Promise<any>, cb: () => void) => {

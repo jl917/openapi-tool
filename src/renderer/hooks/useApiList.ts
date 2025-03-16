@@ -6,7 +6,9 @@ export const atomApiList = atom([]);
 export const useApiList = () => {
     const [apiList, setApiList] = useAtom(atomApiList);
     useEffect(() => {
-        console.log(window.api.triggerMessage('getStore'));
+        window.api.sendMessage('getStore').then((res: any) => {
+            setApiList(res.data);
+        })
     }, []);
     return {
         apiList,
